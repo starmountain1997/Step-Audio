@@ -1,7 +1,7 @@
 import torchaudio
 import argparse
 from stepaudio import StepAudio
-
+import time
 
 def main():
     parser = argparse.ArgumentParser(description="StepAudio Offline Inference")
@@ -17,10 +17,12 @@ def main():
     )
 
     # example for text input
+    start_time = time.time()
     text, audio, sr = model(
-        [{"role": "user", "content": "你好，我是你的朋友，我叫小明，你叫什么名字？"}],
+        [{"role": "user", "content": "test "*1024}],
         "Tingting",
     )
+    print(f"================ e2e: {time.time() - start_time} seconds")
     torchaudio.save("output/output_e2e_tqta.wav", audio, sr)
 
     # example for audio input
