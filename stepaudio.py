@@ -34,10 +34,12 @@ class StepAudio:
         text_with_audio = self.apply_chat_template(messages)
         token_ids = self.llm_tokenizer.encode(text_with_audio, return_tensors="pt")
         start_time = time.time()
+        torch.cuda.synchronize()
         outputs = self.llm.generate(
             token_ids, max_new_tokens=20, temperature=0.7, top_p=0.9, do_sample=True
         )
-        print(f"chat llm generate time: {time.time() - start_time} seconds")
+        torch.cuda.synchronize()
+        print(f"==================== chat llm generate: {time.time() - start_time} seconds ====================")
         output_token_ids = outputs[:, token_ids.shape[-1] : -1].tolist()[0]
         output_text = self.llm_tokenizer.decode(output_token_ids)
         output_audio, sr = self.decoder(output_text, speaker_id)
@@ -50,8 +52,10 @@ class StepAudio:
     def encode_audio(self, audio_path):
         audio_wav, sr = load_audio(audio_path)
         start_time = time.time()
+        torch.cuda.synchronize()
         audio_tokens = self.encoder(audio_wav, sr)
-        print(f"audio tokenizer time: {time.time() - start_time} seconds")
+        torch.cuda.synchronize()
+        print(f"==================== audio tokenizer: {time.time() - start_time} seconds ====================")
         return audio_tokens
 
     def apply_chat_template(self, messages: list):

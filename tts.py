@@ -100,7 +100,8 @@ class StepAudioTTS:
             prompt_speaker,
             prompt_speaker_info["prompt_code"],
         )
-        print(f"tokenize time: {time.time()- start_time} seconds")
+        print(f"==================== tokenize: {time.time()- start_time} seconds ====================")
+        torch.cuda.synchronize()
         start_time = time.time()
         output_ids = self.llm.generate(
             torch.tensor([token_ids]).to(torch.long).to("cuda"),
@@ -109,9 +110,11 @@ class StepAudioTTS:
             do_sample=True,
             logits_processor=LogitsProcessorList([RepetitionAwareLogitsProcessor()]),
         )
-        print(f"llm generate time: {time.time()- start_time} seconds")
+        torch.cuda.synchronize()
+        print(f"==================== llm generate: {time.time()- start_time} seconds ====================")
         output_ids = output_ids[:, len(token_ids) : -1]  # skip eos token
         start_time = time.time()
+        torch.cuda.synchronize()
         wave_=  cosy_model.token_to_wav_offline(
                 output_ids - 65536,
                 prompt_speaker_info["cosy_speech_feat"].to(torch.bfloat16),
@@ -120,7 +123,8 @@ class StepAudioTTS:
                 prompt_speaker_info["cosy_prompt_token_len"],
                 prompt_speaker_info["cosy_speech_embedding"].to(torch.bfloat16),
             )
-        print(f"token to wav time: {time.time()- start_time} seconds")
+        torch.cuda.synchronize()
+        print(f"==================== token to wav time: {time.time()- start_time} seconds ====================")
         return (
             wave_,
             22050,
