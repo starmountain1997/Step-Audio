@@ -109,11 +109,11 @@ class StepAudioTTS:
                 torch.profiler.ProfilerActivity.CUDA,
             ],
             on_trace_ready=torch.profiler.tensorboard_trace_handler("./tb"),
-            record_shapes=True,
-            profile_memory=True,
-            with_stack=True,
-            with_flops=True,
-            with_modules=True,
+            record_shapes=False,
+            profile_memory=False,
+            with_stack=False,
+            with_flops=False,
+            with_modules=False,
         )
         prof.start()
         output_ids = self.llm.generate(
