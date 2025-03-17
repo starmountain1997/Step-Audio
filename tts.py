@@ -102,7 +102,7 @@ class StepAudioTTS:
         )
         torch.cuda.synchronize()
         start_time = time.time()
-        print(f"=============== StepAudioTTS len token_id: {torch.tensor([token_ids]).shape} ====================")
+        print(f"=============== StepAudioTTS len token_id: {torch.tensor(token_ids).shape} ====================")
         output_ids = self.llm.generate(
             torch.tensor([token_ids]).to(torch.long).to("cuda"),
             max_length=8192,

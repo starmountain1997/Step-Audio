@@ -35,7 +35,7 @@ class StepAudio:
         token_ids = self.llm_tokenizer.encode(text_with_audio, return_tensors="pt")
         start_time = time.time()
         torch.cuda.synchronize()
-        print(f"==================== stepaudio token_ids: {token_ids}, len_token_ids: {torch.tensor([token_ids]).shape} ====================")
+        print(f"==================== stepaudio token_ids: {token_ids}, len_token_ids: {torch.tensor(token_ids).shape} ====================")
         outputs = self.llm.generate(
             token_ids, max_new_tokens=2048, 
             temperature=0., 
