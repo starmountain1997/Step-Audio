@@ -2,6 +2,10 @@ from amp.common.patch_transformers import patch_get_class_in_module
 from amp.module_patcher import when_imported
 from loguru import logger
 import time
+import torch
+from typing import Optional, Tuple, Union, List
+from transformers.utils import Cache
+
 def forward(
         self,
         input_ids: torch.LongTensor = None,
