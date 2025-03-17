@@ -74,7 +74,7 @@ def patch_step_audio(mod):
     if package_name == "modeling_step1":
         logger.info(f"Patching {package_name}")
         logger.info(f"{mod} is patched.")
-        mod.modeling_step1.modeling_step1.forward = forward
+        mod.Step1ForCausalLM.forward = forward
 
 @when_imported("transformers")
 def patch_step_audio(mod):
