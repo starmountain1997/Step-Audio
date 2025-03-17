@@ -3,6 +3,7 @@ import argparse
 from stepaudio import StepAudio
 import time
 import torch
+from step_patcher import patch_step_audio
 
 def main():
     parser = argparse.ArgumentParser(description="StepAudio Offline Inference")

@@ -26,7 +26,7 @@ def main():
 
     if args.synthesis_type == "tts":
         text = "（RAP）我踏上自由的征途，追逐那遥远的梦想，挣脱束缚的枷锁，让心灵随风飘荡，每一步都充满力量，每一刻都无比闪亮，自由的信念在燃烧，照亮我前进的方向!"
-        tart_time = time.time()
+        start_time = time.time()
         output_audio, sr = tts_engine(text, "Tingting")
         print(f"==================== tts e2e: {time.time() - start_time} seconds ====================")
         torchaudio.save(f"{args.output_path}/output_tts.wav", output_audio, sr)
