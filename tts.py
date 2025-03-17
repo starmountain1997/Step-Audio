@@ -103,19 +103,19 @@ class StepAudioTTS:
         torch.cuda.synchronize()
         start_time = time.time()
         print(f"=============== StepAudioTTS len token_id: {torch.tensor(token_ids).shape} ====================")
-        prof = torch.profiler.profile(
-            activities=[
-                torch.profiler.ProfilerActivity.CPU,
-                torch.profiler.ProfilerActivity.CUDA,
-            ],
-            on_trace_ready=torch.profiler.tensorboard_trace_handler("./tb"),
-            record_shapes=False,
-            profile_memory=False,
-            with_stack=False,
-            with_flops=False,
-            with_modules=False,
-        )
-        prof.start()
+        # prof = torch.profiler.profile(
+        #     activities=[
+        #         torch.profiler.ProfilerActivity.CPU,
+        #         torch.profiler.ProfilerActivity.CUDA,
+        #     ],
+        #     on_trace_ready=torch.profiler.tensorboard_trace_handler("./tb"),
+        #     record_shapes=False,
+        #     profile_memory=False,
+        #     with_stack=False,
+        #     with_flops=False,
+        #     with_modules=False,
+        # )
+        # prof.start()
         output_ids = self.llm.generate(
             torch.tensor([token_ids]).to(torch.long).to("cuda"),
             max_length=8192,
@@ -124,7 +124,7 @@ class StepAudioTTS:
             do_sample=False,
             logits_processor=LogitsProcessorList([RepetitionAwareLogitsProcessor()]),
         )
-        prof.stop()
+        # prof.stop()
         torch.cuda.synchronize()
         print(f"==================== StepAudioTTS len output_ids: {output_ids.shape} ====================")
         print(f"==================== StepAudioTTS generate(tts): {time.time()- start_time} seconds ====================")
