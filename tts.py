@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import time
 
 import torchaudio
 import torch
@@ -92,30 +93,42 @@ class StepAudioTTS:
         if clone_dict:
             prompt_speaker = ''
             prompt_speaker_info = clone_speakers_info
-
+        start_time = time.time()
         token_ids = self.tokenize(
             text,
             prompt_speaker_info["prompt_text"],
             prompt_speaker,
             prompt_speaker_info["prompt_code"],
         )
+        torch.cuda.synchronize()
+        start_time = time.time()
+        print(f"=============== StepAudioTTS len token_id: {torch.tensor([token_ids]).shape} ====================")
         output_ids = self.llm.generate(
             torch.tensor([token_ids]).to(torch.long).to("cuda"),
             max_length=8192,
-            temperature=0.7,
-            do_sample=True,
+            temperature=0.0,
+            # temperature=0.7,
+            do_sample=False,
             logits_processor=LogitsProcessorList([RepetitionAwareLogitsProcessor()]),
         )
+        torch.cuda.synchronize()
+        print(f"==================== StepAudioTTS len output_ids: {output_ids.shape} ====================")
+        print(f"==================== StepAudioTTS generate(tts): {time.time()- start_time} seconds ====================")
         output_ids = output_ids[:, len(token_ids) : -1]  # skip eos token
-        return (
-            cosy_model.token_to_wav_offline(
+        start_time = time.time()
+        torch.cuda.synchronize()
+        wave_=  cosy_model.token_to_wav_offline(
                 output_ids - 65536,
                 prompt_speaker_info["cosy_speech_feat"].to(torch.bfloat16),
                 prompt_speaker_info["cosy_speech_feat_len"],
                 prompt_speaker_info["cosy_prompt_token"],
                 prompt_speaker_info["cosy_prompt_token_len"],
                 prompt_speaker_info["cosy_speech_embedding"].to(torch.bfloat16),
-            ),
+            )
+        torch.cuda.synchronize()
+        print(f"==================== cosy voice: {time.time()- start_time} seconds ====================")
+        return (
+            wave_,
             22050,
         )
 
