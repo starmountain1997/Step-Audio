@@ -126,7 +126,9 @@ class StepAudioTTS:
                 prompt_speaker_info["cosy_speech_embedding"].to(torch.bfloat16),
             )
         torch.cuda.synchronize()
+        print(f"==================== cosy voice: {wave_.shape} ====================")
         print(f"==================== cosy voice: {time.time()- start_time} seconds ====================")
+
         return (
             wave_,
             22050,
